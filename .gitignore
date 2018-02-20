@@ -1,0 +1,4 @@
+/vendor/
+/Report/*
+!Report/.gitkeep
+.idea/*

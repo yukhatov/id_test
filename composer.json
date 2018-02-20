@@ -1,0 +1,9 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Classes\\" : "Core/Classes/",
+            "App\\" : "App/",
+            "Interfaces\\" : "Core/Interfaces/"
+        }
+    }
+}
