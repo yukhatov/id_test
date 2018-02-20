@@ -28,7 +28,7 @@ class ReportManager implements IManager
      */
     public function report($data)
     {
-        $name = "report_" . date('d.m.Y') . ".html";
+        $name = 'report_' . date('d.m.Y') . '.html';
         $reportHTML = @file_get_contents(self::REPORT_DIR . $name);
 
         /* If file does not exist or empty */
@@ -85,24 +85,24 @@ class ReportManager implements IManager
      */
     private function buildAndWriteReport($reportArray, $name)
     {
-        $reportData = "<table>
+        $reportData = '<table>
           <tr>
             <th>url</th>
             <th>count_of_tags</th> 
             <th>duration</th>
-          </tr>";
+          </tr>';
 
         foreach ($reportArray as $report) {
-            $reportData .= "<tr>
-                <td>" . $report['url'] ."</td>
-                <td>" . $report['count_of_tags'] . "</td>
-                <td>" . $report['duration'] . "</td>
-              </tr>";
+            $reportData .= '<tr>
+                <td>' . $report['url'] .'</td>
+                <td>' . $report['count_of_tags'] . '</td>
+                <td>' . $report['duration'] . '</td>
+              </tr>';
         }
 
-        $reportData .= "</table>";
+        $reportData .= '</table>';
 
-        file_put_contents(self::REPORT_DIR . $name, $reportData);
+        return file_put_contents(self::REPORT_DIR . $name, $reportData);
     }
 
     /**
