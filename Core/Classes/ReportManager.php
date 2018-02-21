@@ -21,6 +21,13 @@ class ReportManager implements IManager
      */
     const REPORT_DIR = 'Report/';
 
+    /*
+     *  Report keys
+     */
+    static $KEY_URL = 'url';
+    static $KEY_COUNT_OF_TAGS = 'count_of_tags';
+    static $KEY_DURATION = 'duration';
+
     /**
      * Builds new reports or adds data to existing ones
      *
@@ -56,7 +63,7 @@ class ReportManager implements IManager
         $isInserted = false;
 
         foreach ($reportArray as $keyReport => $report) {
-            if ($report['count_of_tags'] >= $reportData['count_of_tags']) {
+            if ($report[self::$KEY_COUNT_OF_TAGS] >= $reportData[self::$KEY_COUNT_OF_TAGS]) {
                 array_splice(
                     $reportArray,
                     $keyReport,
@@ -94,9 +101,9 @@ class ReportManager implements IManager
 
         foreach ($reportArray as $report) {
             $reportData .= '<tr>
-                <td>' . $report['url'] .'</td>
-                <td>' . $report['count_of_tags'] . '</td>
-                <td>' . $report['duration'] . '</td>
+                <td>' . $report[self::$KEY_URL] .'</td>
+                <td>' . $report[self::$KEY_COUNT_OF_TAGS] . '</td>
+                <td>' . $report[self::$KEY_DURATION] . '</td>
               </tr>';
         }
 

@@ -7,6 +7,7 @@
  */
 namespace App;
 
+use Classes\ReportManager;
 use Interfaces\ICrawable;
 use Interfaces\ICrawler;
 use Interfaces\IRunable;
@@ -68,7 +69,7 @@ class Application implements IRunable, ICrawable
         $tagsCount = $this->crawler->countTags($this->crawler->getResource($url), $tag);
         $duration = microtime(true) - $startTime;
 
-        return  ['url' => $url, 'count_of_tags' => $tagsCount, 'duration' => $duration];
+        return  [ReportManager::$KEY_URL => $url, ReportManager::$KEY_COUNT_OF_TAGS => $tagsCount, ReportManager::$KEY_DURATION => $duration];
     }
 
     /**
@@ -84,5 +85,7 @@ class Application implements IRunable, ICrawable
         $reportData = $this->crawl($url);
 
         $this->reportManager->report($reportData);
+
+        return 'Success';
     }
 }
