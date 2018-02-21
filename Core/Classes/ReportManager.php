@@ -49,7 +49,7 @@ class ReportManager implements IManager
         $reportArray = $this->getReportArrayFromHtml($reportHTML);
         $reportArray = $this->insertDataIntoReport($reportArray, $data);
 
-        $this->buildAndWriteReport($reportArray, $name);
+        return $this->buildAndWriteReport($reportArray, $name);
     }
 
     /**
