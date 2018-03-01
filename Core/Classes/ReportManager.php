@@ -48,7 +48,8 @@ class ReportManager implements IManager
 
     /**
      * ReportManager constructor.
-     * @param IDataConverter $converter
+     * @param IDataConverter $dataConverter
+     * @param IDataMerger $dataMerger
      * @throws Exception if config broken.
      */
     public function __construct(IDataConverter $dataConverter, IDataMerger $dataMerger)
@@ -64,19 +65,18 @@ class ReportManager implements IManager
 
     /**
      * Builds new reports or adds data to existing ones
-     *
-     * @param $data
+     * 
+     * @param array $data
+     * @return bool
      */
-    public function report($data)
+    public function report(array $data) : bool
     {
         $name = sprintf($this->config['report']['name'], date('d.m.Y'));
         $reportHTML = @file_get_contents($this->config['report']['dir'] . $name);
 
         /* If file does not exist or empty */
         if ($reportHTML === false || !strlen($reportHTML)) {
-            $this->buildAndWriteReport([0 => $data], $name);
-
-            return;
+            return $this->buildAndWriteReport([0 => $data], $name);
         }
 
         /* If file has records than analize and insert */
@@ -88,11 +88,12 @@ class ReportManager implements IManager
 
     /**
      * Builds html table from array and writes to file
-     *
-     * @param $reportArray
-     * @param $name
+     * 
+     * @param array $reportArray
+     * @param string $name
+     * @return bool
      */
-    private function buildAndWriteReport($reportArray, $name)
+    private function buildAndWriteReport(array $reportArray, string $name) : bool
     {
         $reportData = '<table>
           <tr>
@@ -111,6 +112,10 @@ class ReportManager implements IManager
 
         $reportData .= '</table>';
 
-        return file_put_contents($this->config['report']['dir'] . $name, $reportData);
+        if (!@file_put_contents($this->config['report']['dir'] . $name, $reportData)) {
+            return false;
+        }
+        
+        return true;
     }
 }

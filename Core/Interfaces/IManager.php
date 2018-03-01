@@ -14,8 +14,8 @@ namespace Interfaces;
 interface IManager
 {
     /**
-     * @param $data
-     * @return mixed
+     * @param array $data
+     * @return bool
      */
-    function report($data);
+    function report(array $data) : bool;
 }
