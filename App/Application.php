@@ -63,11 +63,11 @@ class Application implements IRunable, ICrawable
 
     /**
      * @param $url
-     * @return string
+     * @return bool
      * 
      * @throws Exception if url is not valid.
      */
-    public function run($url)
+    public function run($url) : bool
     {
         if (!$this->validator->isValid($url)) {
             throw new \Exception("Url validation error!");
@@ -75,8 +75,10 @@ class Application implements IRunable, ICrawable
         
         $reportData = $this->crawl($url);
 
-        $this->reportManager->report($reportData);
+        if (!$this->reportManager->report($reportData)) {
+            throw new \Exception("Report writing error!");
+        }
 
-        return 'Success';
+        return true;
     }
 }

@@ -15,7 +15,7 @@ interface IRunable
 {
     /**
      * @param $url
-     * @return mixed
+     * @return bool
      */
-    function run($url);
+    function run($url) : bool;
 }

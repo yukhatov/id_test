@@ -112,7 +112,7 @@ class ReportManager implements IManager
 
         $reportData .= '</table>';
 
-        if (!@file_put_contents($this->config['report']['dir'] . $name, $reportData)) {
+        if (@file_put_contents($this->config['report']['dir'] . $name, $reportData) === false) {
             return false;
         }
         
