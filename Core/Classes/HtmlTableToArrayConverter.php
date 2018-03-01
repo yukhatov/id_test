@@ -49,7 +49,7 @@ class HtmlTableToArrayConverter implements IDataConverter
             }
         }
 
-        $aDataTableDetailHTML = $aTempData; unset($aTempData);
+        $aDataTableDetailHTML = $aTempData; 
 
         return $aDataTableDetailHTML;
     }

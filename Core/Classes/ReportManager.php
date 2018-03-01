@@ -8,8 +8,8 @@
 namespace Classes;
 
 use Interfaces\IDataConverter;
+use Interfaces\IDataMerger;
 use Interfaces\IManager;
-use DOMDocument;
 
 /**
  * Class ReportManager
@@ -42,12 +42,18 @@ class ReportManager implements IManager
     private $dataConverter;
 
     /**
+     * @var IDataMerger
+     */
+    private $dataMerger;
+
+    /**
      * ReportManager constructor.
      * @param IDataConverter $converter
      * @throws Exception if config broken.
      */
-    public function __construct(IDataConverter $dataConverter)
+    public function __construct(IDataConverter $dataConverter, IDataMerger $dataMerger)
     {
+        $this->dataMerger = $dataMerger;
         $this->dataConverter = $dataConverter;
         $this->config = @parse_ini_file(__DIR__ . '/../../config.ini', true);
         
@@ -75,41 +81,9 @@ class ReportManager implements IManager
 
         /* If file has records than analize and insert */
         $reportArray = $this->dataConverter->convert($reportHTML);
-        $reportArray = $this->insertDataIntoReport($reportArray, $data);
+        $reportArray = $this->dataMerger->merge($reportArray, $data);
 
         return $this->buildAndWriteReport($reportArray, $name);
-    }
-
-    /**
-     * Analyzes existing report and insets data into ordered position
-     *
-     * @param $reportArray
-     * @return array
-     */
-    private function insertDataIntoReport($reportArray, $reportData)
-    {
-        $isInserted = false;
-
-        foreach ($reportArray as $keyReport => $report) {
-            if ($report[self::$key_count_of_tags] >= $reportData[self::$key_count_of_tags]) {
-                array_splice(
-                    $reportArray,
-                    $keyReport,
-                    0,
-                    [$keyReport + 1 => $reportData]
-                );
-
-                $isInserted = true;
-
-                break;
-            }
-        }
-
-        if (!$isInserted) {
-            $reportArray[] = $reportData;
-        }
-
-        return $reportArray;
     }
 
     /**

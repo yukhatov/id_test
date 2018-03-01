@@ -8,14 +8,15 @@
 namespace Interfaces;
 
 /**
- * Interface IDataConverter
+ * Interface IDataMerger
  * @package Interfaces
  */
-interface IDataConverter
+interface IDataMerger
 {
     /**
-     * @param $data
+     * @param array $target
+     * @param array $data
      * @return array
      */
-    function convert($data) : array;
+    function merge(array $target, array $data) : array;
 }

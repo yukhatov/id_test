@@ -25,7 +25,7 @@ class ApplicationFactory
         $application = new Application(
             new Validator(),
             new Crawler(),
-            new ReportManager(new HtmlTableToArrayConverter())
+            new ReportManager(new HtmlTableToArrayConverter(), new TagsCountDataMerger())
         );
 
         return $application;
