@@ -22,11 +22,11 @@ class ApplicationFactory
      */
     public function createApplication()
     {
-        $application = new Application();
-
-        $application->setValidator(new Validator());
-        $application->setCrawler(new Crawler());
-        $application->setReportManager(new ReportManager());
+        $application = new Application(
+            new Validator(),
+            new Crawler(),
+            new ReportManager(new HtmlTableToArrayConverter())
+        );
 
         return $application;
     }

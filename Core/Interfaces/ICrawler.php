@@ -17,12 +17,12 @@ interface ICrawler
      * @param $url
      * @return mixed
      */
-    public function getResource($url);
+    function getResource($url);
 
     /**
      * @param $resource
      * @param $tag
      * @return mixed
      */
-    public function countTags($resource, $tag);
+    function countTags($resource, $tag);
 }

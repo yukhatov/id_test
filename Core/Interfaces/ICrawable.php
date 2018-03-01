@@ -17,11 +17,5 @@ interface ICrawable
      * @param $url
      * @return mixed
      */
-    public function crawl($url);
-
-    /**
-     * @param ICrawler $crawler
-     * @return mixed
-     */
-    public function setCrawler(ICrawler $crawler);
+    function crawl($url);
 }

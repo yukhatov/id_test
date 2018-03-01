@@ -1,21 +1,21 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: artur
- * Date: 20.02.18
- * Time: 19:57
+ * User: littleprince
+ * Date: 01.03.18
+ * Time: 14:26
  */
 namespace Interfaces;
 
 /**
- * Interface IManager
+ * Interface IDataConverter
  * @package Interfaces
  */
-interface IManager
+interface IDataConverter
 {
     /**
      * @param $data
      * @return mixed
      */
-    function report($data);
+    function convert($data) : array;
 }

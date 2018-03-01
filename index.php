@@ -18,6 +18,15 @@ if (!isset($argv[1])) {
 }
 
 $factory = new ApplicationFactory();
-$application = $factory->createApplication();
 
-echo $application->run($argv[1]);
+try {
+    $application = $factory->createApplication();
+    
+    $application->run($argv[1]);    
+} catch (Exception $e) {
+    echo $e->getMessage();
+    
+    return;
+}
+
+echo "Success!";

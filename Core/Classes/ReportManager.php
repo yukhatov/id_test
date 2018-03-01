@@ -7,6 +7,7 @@
  */
 namespace Classes;
 
+use Interfaces\IDataConverter;
 use Interfaces\IManager;
 use DOMDocument;
 
@@ -16,17 +17,44 @@ use DOMDocument;
  */
 class ReportManager implements IManager
 {
+    /* Report keys 
+     *
+     * @var string
+     */
+    public static $key_url = 'url';
     /**
-     * Sub directory for reports
+     * @var string
      */
-    const REPORT_DIR = 'Report/';
+    public static $key_count_of_tags = 'count_of_tags';
+    /**
+     * @var string
+     */
+    public static $key_duration = 'duration';
 
-    /*
-     *  Report keys
+    /**
+     * @var array
      */
-    static $KEY_URL = 'url';
-    static $KEY_COUNT_OF_TAGS = 'count_of_tags';
-    static $KEY_DURATION = 'duration';
+    private $config;
+
+    /**
+     * @var IDataConverter
+     */
+    private $dataConverter;
+
+    /**
+     * ReportManager constructor.
+     * @param IDataConverter $converter
+     * @throws Exception if config broken.
+     */
+    public function __construct(IDataConverter $dataConverter)
+    {
+        $this->dataConverter = $dataConverter;
+        $this->config = @parse_ini_file(__DIR__ . '/../../config.ini', true);
+        
+        if ( !$this->config ) {
+            throw new \Exception("Config parsing eror!");
+        }
+    }
 
     /**
      * Builds new reports or adds data to existing ones
@@ -35,8 +63,8 @@ class ReportManager implements IManager
      */
     public function report($data)
     {
-        $name = 'report_' . date('d.m.Y') . '.html';
-        $reportHTML = @file_get_contents(self::REPORT_DIR . $name);
+        $name = sprintf($this->config['report']['name'], date('d.m.Y'));
+        $reportHTML = @file_get_contents($this->config['report']['dir'] . $name);
 
         /* If file does not exist or empty */
         if ($reportHTML === false || !strlen($reportHTML)) {
@@ -46,7 +74,7 @@ class ReportManager implements IManager
         }
 
         /* If file has records than analize and insert */
-        $reportArray = $this->getReportArrayFromHtml($reportHTML);
+        $reportArray = $this->dataConverter->convert($reportHTML);
         $reportArray = $this->insertDataIntoReport($reportArray, $data);
 
         return $this->buildAndWriteReport($reportArray, $name);
@@ -63,7 +91,7 @@ class ReportManager implements IManager
         $isInserted = false;
 
         foreach ($reportArray as $keyReport => $report) {
-            if ($report[self::$KEY_COUNT_OF_TAGS] >= $reportData[self::$KEY_COUNT_OF_TAGS]) {
+            if ($report[self::$key_count_of_tags] >= $reportData[self::$key_count_of_tags]) {
                 array_splice(
                     $reportArray,
                     $keyReport,
@@ -101,52 +129,14 @@ class ReportManager implements IManager
 
         foreach ($reportArray as $report) {
             $reportData .= '<tr>
-                <td>' . $report[self::$KEY_URL] .'</td>
-                <td>' . $report[self::$KEY_COUNT_OF_TAGS] . '</td>
-                <td>' . $report[self::$KEY_DURATION] . '</td>
+                <td>' . $report[self::$key_url] .'</td>
+                <td>' . $report[self::$key_count_of_tags] . '</td>
+                <td>' . $report[self::$key_duration] . '</td>
               </tr>';
         }
 
         $reportData .= '</table>';
 
-        return file_put_contents(self::REPORT_DIR . $name, $reportData);
-    }
-
-    /**
-     * Converts html table to array
-     *
-     * @param $reportHTML
-     * @return mixed
-     */
-    private function getReportArrayFromHtml($reportHTML)
-    {
-        $DOM = new DOMDocument();
-        $DOM->loadHTML($reportHTML);
-
-        $Header = $DOM->getElementsByTagName('th');
-        $Detail = $DOM->getElementsByTagName('td');
-
-        foreach($Header as $NodeHeader) {
-            $aDataTableHeaderHTML[] = trim($NodeHeader->textContent);
-        }
-
-        $i = 0;
-        $j = 0;
-
-        foreach ($Detail as $sNodeDetail) {
-            $aDataTableDetailHTML[$j][] = trim($sNodeDetail->textContent);
-            $i = $i + 1;
-            $j = $i % count($aDataTableHeaderHTML) == 0 ? $j + 1 : $j;
-        }
-
-        for ($i = 0; $i < count($aDataTableDetailHTML); $i++) {
-            for ($j = 0; $j < count($aDataTableHeaderHTML); $j++) {
-                $aTempData[$i][$aDataTableHeaderHTML[$j]] = $aDataTableDetailHTML[$i][$j];
-            }
-        }
-
-        $aDataTableDetailHTML = $aTempData; unset($aTempData);
-
-        return $aDataTableDetailHTML;
+        return file_put_contents($this->config['report']['dir'] . $name, $reportData);
     }
 }

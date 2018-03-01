@@ -17,11 +17,5 @@ interface IRunable
      * @param $url
      * @return mixed
      */
-    public function run($url);
-
-    /**
-     * @param IValidator $validator
-     * @return mixed
-     */
-    public function setValidator(IValidator $validator);
+    function run($url);
 }

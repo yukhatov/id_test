@@ -17,5 +17,5 @@ interface IValidator
      * @param $value
      * @return string
      */
-    public function isValid($value);
+    function isValid($value);
 }

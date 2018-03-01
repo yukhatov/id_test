@@ -36,26 +36,15 @@ class Application implements IRunable, ICrawable
     private $reportManager;
 
     /**
+     * Application constructor.
      * @param IValidator $validator
-     */
-    public function setValidator(IValidator $validator)
-    {
-        $this->validator = $validator;
-    }
-
-    /**
      * @param ICrawler $crawler
-     */
-    public function setCrawler(ICrawler $crawler)
-    {
-        $this->crawler = $crawler;
-    }
-
-    /**
      * @param IManager $reportManager
      */
-    public function setReportManager(IManager $reportManager)
+    public function __construct(IValidator $validator, ICrawler $crawler, IManager $reportManager)
     {
+        $this->validator = $validator;
+        $this->crawler = $crawler;
         $this->reportManager = $reportManager;
     }
 
@@ -63,25 +52,27 @@ class Application implements IRunable, ICrawable
      * @param $url
      * @return array
      */
-    public function crawl($url) {
+    public function crawl($url) : array {
         $tag = '<img';
         $startTime = microtime(true);
         $tagsCount = $this->crawler->countTags($this->crawler->getResource($url), $tag);
         $duration = microtime(true) - $startTime;
 
-        return  [ReportManager::$KEY_URL => $url, ReportManager::$KEY_COUNT_OF_TAGS => $tagsCount, ReportManager::$KEY_DURATION => $duration];
+        return  [ReportManager::$key_url => $url, ReportManager::$key_count_of_tags => $tagsCount, ReportManager::$key_duration => $duration];
     }
 
     /**
      * @param $url
      * @return string
+     * 
+     * @throws Exception if url is not valid.
      */
     public function run($url)
     {
         if (!$this->validator->isValid($url)) {
-            return 'Website url is not valid!';
+            throw new \Exception("Url validation error!");
         }
-
+        
         $reportData = $this->crawl($url);
 
         $this->reportManager->report($reportData);
